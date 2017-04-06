@@ -15,7 +15,7 @@ gcc -O3 -fopenmp -lm ZFC_VGG16_CPU.c -o ZFC_VGG16_CPU.exe
 
 # Usage
 
-ZFC_VGG16_CPU.exe <weights_path> <file_with_list_of_images> <output file> <output convolution features (optional)>
+ZFC_VGG16_CPU.exe <weights_path> <file_with_list_of_images> <output_file> <output_convolution_features_(optional)>
 
 Example: ZFC_VGG16_CPU.exe "weights.txt" "image_list.txt" "results.txt" 1
 

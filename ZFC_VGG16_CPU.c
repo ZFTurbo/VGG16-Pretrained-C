@@ -1,3 +1,13 @@
+/* 
+	Pretrained VGG16 convolutional neural network in C language
+	GitHUB Page: https://github.com/ZFTurbo/VGG16-Pretrained-C
+	Author: ZFTurbo
+	
+	Compilation: gcc -O3 -fopenmp -lm ZFC_VGG16_CPU.c -o ZFC_VGG16_CPU.exe
+	Usage: ZFC_VGG16_CPU.exe <weights_path> <file_with_list_of_images> <output file> <output convolution features (optional)>
+	Example: ZFC_VGG16_CPU.exe "weights.txt" "image_list.txt" "results.txt" 1
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

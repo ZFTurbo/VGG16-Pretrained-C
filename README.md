@@ -38,14 +38,14 @@ https://mega.nz/#!LIhjXRhQ!scgNodAkfwWIUZdTcRfmKNHjtUfUb2KiIvfvXdIe-vc
 2) Use own TEXT format for images and weights
 3) Not optimized
 
-# Image format:
+# Image format
 
 - Text file
 - BGR order
 - Exactly 3x224x224 integers in txt file, separated by spaces.
 - See image_to_text_converter.py for details.
 
-# Weights format:
+# Weights format
 
 - Text file
 - Weights + Bias by levels on independent lines

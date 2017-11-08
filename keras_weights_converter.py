@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+# Usage: python keras_weights_converter.py <path to keras weights (.h5)> <path to output weights in text format (.txt)>
 __author__ = 'ZFTurbo: https://kaggle.com/zfturbo'
 
 import os
+import sys
 os.environ["THEANO_FLAGS"] = "floatX=float32,device=cpu,force_device=True"
 import numpy as np
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
+
 
 np.random.seed(2016)
 
@@ -141,7 +144,9 @@ def create_weights_text_file(model, out_file):
 
 if __name__ == '__main__':
     print('Read model...')
-    # model, model_checker = VGG_16('weights/vgg16_weights.h5')
-    model, model_checker = VGG_16('weights/vgg16_weights_th_dim_ordering_th_kernels.h5')
-    print(model.summary())
-    create_weights_text_file(model, "weights/vgg16_weights_v2.txt")
+    if len(sys.argv) != 3:
+        print('Usage: python keras_weights_converter.py <path to keras weights (.h5)> <path to output weights in text format (.txt)>')
+    else:
+        model, model_checker = VGG_16(sys.argv[1])
+        print(model.summary())
+        create_weights_text_file(model, sys.argv[2])

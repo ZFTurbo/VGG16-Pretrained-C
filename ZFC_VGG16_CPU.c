@@ -729,14 +729,17 @@ char *trimwhitespace(char *str)
 int main(int argc, char *argv[]) {
 	FILE *file_list, *results;
 	char buf[1024];
-	clock_t timeStart, timeEnd;
+	struct timeval timeStart, timeEnd;
+	double deltaTime;
 	char *weights_file;
 	char *image_list_file;
 	char *output_file;
 	int lvls = -1;
 	int only_convolution = 0;
 
+#ifdef _OPENMP
 	numthreads = omp_get_num_procs() - 1;
+#endif
 	if (numthreads < 1)
 		numthreads = 1;
 	// numthreads = 2;
@@ -766,13 +769,14 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	timeStart = clock();
+	gettimeofday(&timeStart, NULL);
 	read_weights(weights_file, lvls);
-	timeEnd = clock();
-	printf("Reading weights: %.3f sec\n", (float)(timeEnd - timeStart) / CLOCKS_PER_SEC);
+	gettimeofday(&timeEnd, NULL);
+	deltaTime = ((timeEnd.tv_sec  - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) / 1.e6;
+	printf("Reading weights: %.3lf sec\n", deltaTime);
 
 	while (!feof(file_list)) {
-		timeStart = clock();
+		gettimeofday(&timeStart, NULL);
 		fgets(buf, 1024, file_list);
 		if (strlen(buf) == 0) {
 			break;
@@ -783,8 +787,9 @@ int main(int argc, char *argv[]) {
 		// dump_image();
 		get_VGG16_predict(only_convolution);
 		output_predictions(results, only_convolution);
-		timeEnd = clock();
-		printf("Infer image %s: %.3f sec\n", buf, (float)(timeEnd - timeStart) / CLOCKS_PER_SEC);
+		gettimeofday(&timeEnd, NULL);
+		deltaTime = ((timeEnd.tv_sec  - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) / 1.e6;
+		printf("Infer image %s: %.3lf sec\n", buf, deltaTime);
 	}
 
 	free_memory();

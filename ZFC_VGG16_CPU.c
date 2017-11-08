@@ -14,10 +14,25 @@
 #include <time.h>
 #include <omp.h>
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS 1
+void gettimeofday(time_t *tp, char *_)
+{
+	*tp = clock();
+	return;
+}
+
+double get_seconds(time_t timeStart, time_t timeEnd) {
+	return (double)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+}
+#else
+double get_seconds(struct timeval timeStart, struct timeval timeEnd) {
+	return ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) / 1.e6;
+}
+#endif
 
 #define SIZE 224
 #define CONV_SIZE 3
-#define _CRT_SECURE_NO_WARNINGS 1
 int numthreads;
 
 
@@ -473,7 +488,7 @@ void dump_image() {
 
 
 void get_VGG16_predict(int only_convolution) {
-	int i, j, k, l;
+	int i, j;
 	int level, cur_size;
 
 	// Init intermediate memory
@@ -729,7 +744,11 @@ char *trimwhitespace(char *str)
 int main(int argc, char *argv[]) {
 	FILE *file_list, *results;
 	char buf[1024];
+#ifndef _WIN32
 	struct timeval timeStart, timeEnd;
+#else
+	time_t timeStart, timeEnd;
+#endif
 	double deltaTime;
 	char *weights_file;
 	char *image_list_file;
@@ -765,14 +784,14 @@ int main(int argc, char *argv[]) {
 	}
 	results = fopen(output_file, "w");
 	if (results == NULL) {
-		printf("Couldn't open file for writing: %s", results);
+		printf("Couldn't open file for writing: %s", output_file);
 		return 1;
 	}
 
 	gettimeofday(&timeStart, NULL);
 	read_weights(weights_file, lvls);
 	gettimeofday(&timeEnd, NULL);
-	deltaTime = ((timeEnd.tv_sec  - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) / 1.e6;
+	deltaTime = get_seconds(timeStart, timeEnd);
 	printf("Reading weights: %.3lf sec\n", deltaTime);
 
 	while (!feof(file_list)) {
@@ -788,7 +807,7 @@ int main(int argc, char *argv[]) {
 		get_VGG16_predict(only_convolution);
 		output_predictions(results, only_convolution);
 		gettimeofday(&timeEnd, NULL);
-		deltaTime = ((timeEnd.tv_sec  - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) / 1.e6;
+		deltaTime = get_seconds(timeStart, timeEnd);
 		printf("Infer image %s: %.3lf sec\n", buf, deltaTime);
 	}
 

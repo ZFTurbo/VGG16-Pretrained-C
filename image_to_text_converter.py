@@ -27,3 +27,4 @@ if __name__ == '__main__':
         in_path = sys.argv[1]
         out_path = sys.argv[2]
         gen_text_from_image(in_path, out_path)
+        print('Complete!')

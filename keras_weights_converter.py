@@ -150,3 +150,4 @@ if __name__ == '__main__':
         model, model_checker = VGG_16(sys.argv[1])
         print(model.summary())
         create_weights_text_file(model, sys.argv[2])
+        print('Complete!')

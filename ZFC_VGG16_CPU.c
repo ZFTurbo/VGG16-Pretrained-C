@@ -289,6 +289,8 @@ void read_image(char *in_file) {
 			}
 		}
 	}
+
+	fclose(iin);
 }
 
 
